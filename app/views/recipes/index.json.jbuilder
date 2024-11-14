@@ -1,7 +1,10 @@
 json.array! @recipes do |recipe|
-  json.extract! recipe, *recipe.attribute_names.map(&:to_sym)
+  json.id recipe.id
+  json.name recipe.name
 
   json.ingredients recipe.ingredients do |ingredient|
-    json.extract! ingredient, *ingredient.attribute_names.map(&:to_sym)
+    json.id ingredient.id
+    json.food_name ingredient.food.name
+    json.mesaurement ingredient.measurement
   end
 end
