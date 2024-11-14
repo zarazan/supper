@@ -1,24 +1,13 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Development
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- Install ruby 3.3.6
+- `bundle`
+- Install node 22.11.0
+- `npm install`
+- Setup local postgres server and add username/password to config/database.yml
+- `rails db:create`
+- `rails db:migrate`
+- `rails db:seed`
+- `bin/dev`
