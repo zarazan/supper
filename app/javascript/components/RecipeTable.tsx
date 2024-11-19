@@ -1,58 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useEffect } from 'react'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { fetchRecipes } from '../store/recipesSlice'
 
-interface Recipe {
-  id: number;
-  name: string;
-  created_at: string;
-  modified_at: string;
-}
+const RecipeTable: React.FC = () => {
+  const dispatch = useAppDispatch()
+  const { items: recipes, status, error } = useAppSelector((state) => state.recipes)
 
-const FetchDataComponent: React.FC = () => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Fetch data when the component mounts
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/api/recipes');
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const result: Recipe[] = await response.json();
-        setRecipes(result); // Set the fetched data to the state
-        setLoading(false); // Data loaded, set loading to false
-      } catch (err: any) {
-        setError(err.message); // If error occurs, set the error message
-        setLoading(false); // Stop loading in case of error
-      }
-    };
+    dispatch(fetchRecipes())
+  }, [dispatch])
 
-    fetchData();
-  }, []); // Empty dependency array to run only once on mount
-
-  if (loading) {
-    return <div>Loading...</div>;
+  if (status === 'loading') {
+    return <div>Loading...</div>
   }
 
-  if (error) {
-    return <div>Error: {error}</div>;
+  if (status === 'failed') {
+    return <div>Error: {error}</div>
   }
 
   return (
     <div>
-      <h2>Fetched Data:</h2>
-      <ul>
-        {recipes.map((item) => (
-          <li key={item.id}>
-            {item.id}: {item.name}
-            {item.created_at}
-          </li>
-        ))}
-      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>Recipe Name</th>
+            <th>Ingredients</th>
+          </tr>
+        </thead>
+        <tbody>
+          {recipes.map((recipe) => (
+            <tr key={recipe.id}>
+              <td>{recipe.name}</td>
+              <td>
+                {recipe.ingredients?.map((ingredient) => (
+                  <span key={ingredient.id}>{ingredient.food_name}</span>
+                ))}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
-  );
-};
+  )
+}
 
-export default FetchDataComponent;
+export default RecipeTable

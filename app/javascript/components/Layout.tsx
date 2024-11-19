@@ -5,12 +5,12 @@ const Layout = (): JSX.Element => {
   return (
     <div className="m-2">
       <div className="flex m-6">
-        <h1>ICON</h1>
+        <h1 className="text-orange-500">ICON</h1>
         <Nav />
-        <h1 className="ml-auto">PROFILE</h1>
+        <h1 className="ml-auto text-white">PROFILE</h1>
       </div>
 
-      <div className="m-6">
+      <div className="m-6 text-gray-400">
         <Outlet />
       </div>
     </div>
