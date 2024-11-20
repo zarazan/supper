@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import { fetchRecipes } from '../../store/recipesSlice'
+import { Link } from 'react-router-dom';
 
 const RecipeTable: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -22,7 +23,8 @@ const RecipeTable: React.FC = () => {
 
   return (
     <div>
-      <table>
+      <Link to="/recipes/new" className="bg-blue-500 text-white px-4 py-2 rounded mt-2">New Recipe</Link>
+      <table className="table-auto w-full mt-4">
         <thead>
           <tr>
             <th>Recipe Name</th>
@@ -45,5 +47,4 @@ const RecipeTable: React.FC = () => {
     </div>
   )
 }
-
 export default RecipeTable

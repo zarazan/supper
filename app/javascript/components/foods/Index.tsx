@@ -22,11 +22,10 @@ const FetchDataComponent: React.FC = () => {
 
   return (
     <div>
-      <h2>Fetched Data:</h2>
       <ul>
         {foods.map((item) => (
           <li key={item.id}>
-            {item.id}: {item.name}
+            {item.name}
           </li>
         ))}
       </ul>

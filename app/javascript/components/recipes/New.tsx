@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { createRecipe } from '../../store/recipesSlice';
 import { Ingredient } from '../../types/types';
 import useCsrfToken from '../../hooks/useCsrfToken';
+import { fetchFoods } from '../../store/foodsSlice';
 
 export interface RecipeFormData {
   name: string;
@@ -13,8 +14,14 @@ export interface RecipeFormData {
 const NewRecipeForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const csrfToken = useCsrfToken();
-  const { items: foods } = useAppSelector((state) => state.foods);
+  const { items: foods, status: foods_status } = useAppSelector((state) => state.foods);
   
+  useEffect(() => {
+    if (foods_status === 'idle') {
+      dispatch(fetchFoods())
+    }
+  }, [dispatch]);
+
   const [formData, setFormData] = useState<RecipeFormData>({
     name: '',
     description: '',
@@ -31,6 +38,13 @@ const NewRecipeForm: React.FC = () => {
     });
   };
 
+  const deleteIngredient = (indexToDelete: number) => {
+    setFormData({
+      ...formData,
+      ingredients_attributes: formData.ingredients_attributes.filter((_, index) => index !== indexToDelete)
+    });
+  };
+  
   const handleIngredientChange = (index: number, field: keyof Ingredient, value: string | number) => {
     const newIngredients = [...formData.ingredients_attributes];
     newIngredients[index] = {
@@ -103,8 +117,16 @@ const NewRecipeForm: React.FC = () => {
               value={ingredient.measurement}
               onChange={(e) => handleIngredientChange(index, 'measurement', e.target.value)}
               placeholder="Measurement"
-              className="p-2 border rounded w-24"
+              className="p-2 border rounded min-w-52"
             />
+
+            <button
+              type="button"
+              onClick={() => deleteIngredient(index)}
+              className="bg-red-500 text-white px-3 py-2 rounded"
+            >
+              Delete
+            </button>
           </div>
         ))}
         <button
