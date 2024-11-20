@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { fetchFoods } from '../store/foodsSlice'
+import { useAppDispatch, useAppSelector } from '../../store/hooks'
+import { fetchFoods } from '../../store/foodsSlice'
 
 const FetchDataComponent: React.FC = () => {
   const dispatch = useAppDispatch()

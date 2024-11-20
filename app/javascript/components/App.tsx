@@ -6,9 +6,9 @@ import { store } from '../store/store'
 import Layout from "./Layout";
 import Home from "./Home";
 import Search from "./Search";
-import RecipeTable from "./RecipeTable";
-import FoodsTable from "./FoodsTable";
-import NewRecipeForm from './NewRecipeForm';
+import Recipes from "./recipes/Index";
+import Foods from "./foods/Index";
+import NewRecipeForm from './recipes/New';
 
 const App: React.FC = () => {
   return (
@@ -17,9 +17,9 @@ const App: React.FC = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
-          <Route path="recipes" element={<RecipeTable />} />
+          <Route path="recipes" element={<Recipes />} />
           <Route path="recipes/new" element={<NewRecipeForm />} />
-          <Route path="foods" element={<FoodsTable />} />
+          <Route path="foods" element={<Foods />} />
         </Route>
       </Routes>
     </Provider>

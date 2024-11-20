@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { createRecipe } from '../store/recipesSlice';
-import { Ingredient } from '../types/types';
-
-const getCsrfToken = (): string => {
-  const element = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement;
-  return element ? element.content : '';
-};
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { createRecipe } from '../../store/recipesSlice';
+import { Ingredient } from '../../types/types';
+import useCsrfToken from '../../hooks/useCsrfToken';
 
 export interface RecipeFormData {
   name: string;
@@ -16,8 +12,8 @@ export interface RecipeFormData {
 
 const NewRecipeForm: React.FC = () => {
   const dispatch = useAppDispatch();
+  const csrfToken = useCsrfToken();
   const { items: foods } = useAppSelector((state) => state.foods);
-  const csrfToken = getCsrfToken();
   
   const [formData, setFormData] = useState<RecipeFormData>({
     name: '',
@@ -52,7 +48,7 @@ const NewRecipeForm: React.FC = () => {
     e.preventDefault();
     dispatch(createRecipe({ 
       data: formData,
-      csrfToken 
+      csrfToken
     }))
     .unwrap()
     .then(() => {

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { RecipeFormData } from '../components/NewRecipeForm';
+import { RecipeFormData } from '../components/recipes/New';
 import { Recipe } from '../types/types';
 
 export const createRecipe = createAsyncThunk(
