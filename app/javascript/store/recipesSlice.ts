@@ -1,29 +1,40 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { RecipeFormData } from '../components/NewRecipeForm';
+import { Recipe } from '../types/types';
+
+export const createRecipe = createAsyncThunk(
+  'recipes/create',
+  async ({ data, csrfToken }: { data: RecipeFormData; csrfToken: string }) => {
+    const response = await fetch('/api/recipes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrfToken
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'An error occurred');
+    }
+    
+    return response.json();
+  }
+);
 
 export const fetchRecipes = createAsyncThunk(
   'recipes/fetchRecipes',
   async () => {
-    const response = await fetch('/api/recipes')
-    return response.json()
+    const response = await fetch('/api/recipes');
+    return response.json();
   }
-)
-
-interface Ingredient {
-  id: number;
-  food_name: string;
-  measurement: string;
-}
-
-interface Recipe {
-  id: number;
-  name: string;
-  ingredients: Ingredient[];
-}
+);
 
 interface RecipesState {
-  items: Recipe[]
-  status: 'idle' | 'loading' | 'succeeded' | 'failed'
-  error: string | null
+  items: Recipe[];
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | null;
 }
 
 const initialState: RecipesState = {
@@ -43,7 +54,7 @@ const recipesSlice = createSlice({
       })
       .addCase(fetchRecipes.fulfilled, (state, action) => {
         state.status = 'succeeded'
-        state.items = action.payload
+        state.items = action.payload.recipes
       })
       .addCase(fetchRecipes.rejected, (state, action) => {
         state.status = 'failed'

@@ -24,7 +24,7 @@ const Nav = (): JSX.Element => {
         <NavLink name="Home" path="/" />
         <NavLink name="Search" path="/search" />
         <NavLink name="Recipes" path="/recipes" />
-        <NavLink name="Ingredients" path="/ingredients" />
+        <NavLink name="Foods" path="/foods" />
       </ul>
     </nav>
   )

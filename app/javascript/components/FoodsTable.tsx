@@ -1,42 +1,22 @@
-import React, { useState, useEffect } from 'react';
-
-interface Food {
-  id: number;
-  name: string;
-  created_at: string;
-  modified_at: string;
-}
+import React, { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { fetchFoods } from '../store/foodsSlice'
 
 const FetchDataComponent: React.FC = () => {
-  const [foods, setFoods] = useState<Food[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useAppDispatch()
+  const { items: foods, status, error } = useAppSelector((state) => state.foods)
 
-  // Fetch data when the component mounts
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/api/foods');
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const result: Food[] = await response.json();
-        setFoods(result); // Set the fetched data to the state
-        setLoading(false); // Data loaded, set loading to false
-      } catch (err: any) {
-        setError(err.message); // If error occurs, set the error message
-        setLoading(false); // Stop loading in case of error
-      }
-    };
+    if (status === 'idle') {
+      dispatch(fetchFoods())
+    }
+  }, [dispatch])
 
-    fetchData();
-  }, []); // Empty dependency array to run only once on mount
-
-  if (loading) {
+  if (status === 'loading') {
     return <div>Loading...</div>;
   }
 
-  if (error) {
+  if (status === 'failed') {
     return <div>Error: {error}</div>;
   }
 
@@ -47,7 +27,6 @@ const FetchDataComponent: React.FC = () => {
         {foods.map((item) => (
           <li key={item.id}>
             {item.id}: {item.name}
-            {item.created_at}
           </li>
         ))}
       </ul>

@@ -8,6 +8,7 @@ import Home from "./Home";
 import Search from "./Search";
 import RecipeTable from "./RecipeTable";
 import FoodsTable from "./FoodsTable";
+import NewRecipeForm from './NewRecipeForm';
 
 const App: React.FC = () => {
   return (
@@ -17,7 +18,8 @@ const App: React.FC = () => {
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
           <Route path="recipes" element={<RecipeTable />} />
-          <Route path="ingredients" element={<FoodsTable />} />
+          <Route path="recipes/new" element={<NewRecipeForm />} />
+          <Route path="foods" element={<FoodsTable />} />
         </Route>
       </Routes>
     </Provider>

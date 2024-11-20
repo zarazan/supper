@@ -1,5 +1,4 @@
-import React from 'react';
-import { useEffect } from 'react'
+import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchRecipes } from '../store/recipesSlice'
 
@@ -8,7 +7,9 @@ const RecipeTable: React.FC = () => {
   const { items: recipes, status, error } = useAppSelector((state) => state.recipes)
 
   useEffect(() => {
-    dispatch(fetchRecipes())
+    if (status === 'idle') {
+      dispatch(fetchRecipes())
+    }
   }, [dispatch])
 
   if (status === 'loading') {
