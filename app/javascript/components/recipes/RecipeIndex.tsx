@@ -40,6 +40,14 @@ const RecipeTable: React.FC = () => {
                   <span key={ingredient.id}>{ingredient.food_name}</span>
                 ))}
               </td>
+              <td>
+                <Link 
+                  to={`/recipes/${recipe.id}/edit`} 
+                  className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                >
+                  Edit
+                </Link>
+              </td>
             </tr>
           ))}
         </tbody>

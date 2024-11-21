@@ -1,32 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { createRecipe } from '../../store/recipesSlice';
-import { Ingredient } from '../../types/types';
-import useCsrfToken from '../../hooks/useCsrfToken';
-import { fetchFoods } from '../../store/foodsSlice';
+import React from 'react';
+import { RecipeFormData } from './RecipeNew';
+import { useAppSelector } from '../../store/hooks';
 
-export interface RecipeFormData {
-  name: string;
-  description: string;
-  ingredients_attributes: Ingredient[];
+interface RecipeFormProps {
+  formData: RecipeFormData;
+  setFormData: (data: RecipeFormData) => void;
+  onSubmit: (e: React.FormEvent) => void;
+  submitButtonText: string;
 }
 
-const NewRecipeForm: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const csrfToken = useCsrfToken();
-  const { items: foods, status: foods_status } = useAppSelector((state) => state.foods);
-  
-  useEffect(() => {
-    if (foods_status === 'idle') {
-      dispatch(fetchFoods())
-    }
-  }, [dispatch]);
-
-  const [formData, setFormData] = useState<RecipeFormData>({
-    name: '',
-    description: '',
-    ingredients_attributes: []
-  });
+const RecipeForm: React.FC<RecipeFormProps> = ({ formData, setFormData, onSubmit, submitButtonText }) => {
+  const { items: foods } = useAppSelector((state) => state.foods);
 
   const addIngredient = () => {
     setFormData({
@@ -44,8 +28,8 @@ const NewRecipeForm: React.FC = () => {
       ingredients_attributes: formData.ingredients_attributes.filter((_, index) => index !== indexToDelete)
     });
   };
-  
-  const handleIngredientChange = (index: number, field: keyof Ingredient, value: string | number) => {
+
+  const handleIngredientChange = (index: number, field: 'food_id' | 'measurement', value: string | number) => {
     const newIngredients = [...formData.ingredients_attributes];
     newIngredients[index] = {
       food_id: newIngredients[index]?.food_id || 0,
@@ -58,26 +42,8 @@ const NewRecipeForm: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    dispatch(createRecipe({ 
-      data: formData,
-      csrfToken
-    }))
-    .unwrap()
-    .then(() => {
-      setFormData({
-        name: '',
-        description: '',
-        ingredients_attributes: []
-      });
-    })
-    .catch((error: Error) => {
-      alert('Failed to create recipe: ' + error.message);
-    });
-  };
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-4">
+    <form onSubmit={onSubmit} className="max-w-2xl mx-auto p-4">
       <div className="mb-4">
         <label className="block mb-2">Recipe Name:</label>
         <input
@@ -142,10 +108,10 @@ const NewRecipeForm: React.FC = () => {
         type="submit"
         className="bg-green-500 text-white px-6 py-2 rounded"
       >
-        Create Recipe
+        {submitButtonText}
       </button>
     </form>
   );
 };
 
-export default NewRecipeForm;
+export default RecipeForm;

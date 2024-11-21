@@ -1,6 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { RecipeFormData } from '../components/recipes/New';
+import { RecipeFormData } from '../components/recipes/RecipeNew';
 import { Recipe } from '../types/types';
+
+export const fetchRecipes = createAsyncThunk(
+  'recipes/fetchRecipes',
+  async () => {
+    const response = await fetch('/api/recipes');
+    return response.json();
+  }
+);
 
 export const createRecipe = createAsyncThunk(
   'recipes/create',
@@ -23,11 +31,17 @@ export const createRecipe = createAsyncThunk(
   }
 );
 
-export const fetchRecipes = createAsyncThunk(
-  'recipes/fetchRecipes',
-  async () => {
-    const response = await fetch('/api/recipes');
-    return response.json();
+export const updateRecipe = createAsyncThunk(
+  'recipes/update',
+  async ({ id, data, csrfToken }: { id: number; data: RecipeFormData; csrfToken: string }) => {
+    await fetch(`/api/recipes/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrfToken
+      },
+      body: JSON.stringify(data)
+    })
   }
 );
 
@@ -59,6 +73,12 @@ const recipesSlice = createSlice({
       .addCase(fetchRecipes.rejected, (state, action) => {
         state.status = 'failed'
         state.error = action.error.message || null
+      })
+      .addCase(createRecipe.fulfilled, (state, action) => {
+        if (state.status !== 'idle') {
+          state.items.push(action.payload.recipe)
+          state.status = 'succeeded'
+        }
       })
   },
 })
