@@ -7,7 +7,7 @@ import Layout from "./Layout";
 import Home from "./Home";
 import Search from "./Search";
 import Recipes from "./recipes/RecipeIndex";
-import Foods from "./foods/Index";
+import Foods from "./foods/FoodsIndex";
 import NewRecipeForm from './recipes/RecipeNew';
 import RecipeEdit from './recipes/RecipeEdit';
 

@@ -68,13 +68,19 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ formData, setFormData, onSubmit
         {formData.ingredients_attributes.map((ingredient, index) => (
           <div key={index} className="flex gap-4 mb-2">
             <select
-              value={ingredient.food_id}
+              value={ingredient.food_id || ''}
               onChange={(e) => handleIngredientChange(index, 'food_id', parseInt(e.target.value))}
               className="p-2 border rounded"
             >
               <option value="">Select Food</option>
               {foods.map((food) => (
-                <option key={food.id} value={food.id}>{food.name}</option>
+                <option 
+                  key={food.id} 
+                  value={food.id}
+                  selected={food.id === ingredient.food_id}
+                >
+                  {food.name}
+                </option>
               ))}
             </select>
 

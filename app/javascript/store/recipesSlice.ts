@@ -34,14 +34,21 @@ export const createRecipe = createAsyncThunk(
 export const updateRecipe = createAsyncThunk(
   'recipes/update',
   async ({ id, data, csrfToken }: { id: number; data: RecipeFormData; csrfToken: string }) => {
-    await fetch(`/api/recipes/${id}`, {
+    const response = await fetch(`/api/recipes/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRF-Token': csrfToken
       },
       body: JSON.stringify(data)
-    })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'An error occurred');
+    }
+    
+    return response.json();
   }
 );
 
@@ -79,6 +86,13 @@ const recipesSlice = createSlice({
           state.items.push(action.payload.recipe)
           state.status = 'succeeded'
         }
+      })
+      .addCase(updateRecipe.fulfilled, (state, action) => {
+        const index = state.items.findIndex(recipe => recipe.id === action.payload.recipe.id)
+        if (index !== -1) {
+          state.items[index] = action.payload.recipe
+        }
+        state.status = 'succeeded'
       })
   },
 })
