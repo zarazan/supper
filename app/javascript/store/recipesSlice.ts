@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { RecipeFormData } from '../components/recipes/RecipeNew';
+import { RecipeFormData } from '../components/recipes/RecipeForm';
 import { Recipe } from '../types/types';
 
 export const fetchRecipes = createAsyncThunk(
@@ -52,6 +52,25 @@ export const updateRecipe = createAsyncThunk(
   }
 );
 
+export const deleteRecipe = createAsyncThunk(
+  'recipes/delete',
+  async ({ id, csrfToken }: { id: number; csrfToken: string }) => {
+    const response = await fetch(`/api/recipes/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-Token': csrfToken
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'An error occurred');
+    }
+    
+    return response.json();
+  }
+);
+
 interface RecipesState {
   items: Recipe[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
@@ -67,7 +86,14 @@ const initialState: RecipesState = {
 const recipesSlice = createSlice({
   name: 'recipes',
   initialState,
-  reducers: {},
+  reducers: {
+    recipeUpdated: (state, action) => {
+      const index = state.items.findIndex(recipe => recipe.id === action.payload.id)
+      if (index !== -1) {
+        state.items[index] = action.payload
+      }
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchRecipes.pending, (state) => {
@@ -94,7 +120,12 @@ const recipesSlice = createSlice({
         }
         state.status = 'succeeded'
       })
+      .addCase(deleteRecipe.fulfilled, (state, action) => {
+        state.items = state.items.filter(recipe => recipe.id !== action.payload.recipe.id)
+        state.status = 'succeeded'
+      })
   },
 })
 
+export const { recipeUpdated } = recipesSlice.actions
 export default recipesSlice.reducer

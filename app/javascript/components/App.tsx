@@ -11,6 +11,8 @@ import Foods from "./foods/FoodsIndex";
 import NewRecipeForm from './recipes/RecipeNew';
 import RecipeEdit from './recipes/RecipeEdit';
 
+import "../channels/recipe_channel"
+
 const App: React.FC = () => {
   return (
     <Provider store={store}>

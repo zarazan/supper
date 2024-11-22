@@ -22,6 +22,15 @@ class RecipesController < ApplicationController
     end
   end
 
+  def destroy
+    @recipe = Recipe.find(params[:id])
+    if @recipe.destroy
+      render :create, status: :ok
+    else
+      render :errors, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def recipe_params

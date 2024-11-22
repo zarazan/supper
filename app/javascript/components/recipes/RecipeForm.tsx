@@ -76,7 +76,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ formData, setFormData, onSubmit
       <div className="mb-4">
         <label className="block mb-2">Description:</label>
         <textarea
-          value={formData.description}
+          value={formData.description || ''}
           onChange={(e) => setFormData({...formData, description: e.target.value})}
           className="w-full p-2 border rounded"
         />

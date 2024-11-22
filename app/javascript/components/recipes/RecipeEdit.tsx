@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { updateRecipe } from '../../store/recipesSlice';
+import { updateRecipe, deleteRecipe } from '../../store/recipesSlice';
 import { RecipeFormData } from './RecipeForm';
 import useCsrfToken from '../../hooks/useCsrfToken';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -51,17 +51,44 @@ const EditRecipeForm: React.FC = () => {
     });
   };
 
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this recipe? This action cannot be undone.')) {
+      dispatch(deleteRecipe({ 
+        id: Number(id),
+        csrfToken 
+      }))
+      .unwrap()
+      .then(() => {
+        navigate('/recipes');
+      })
+      .catch((error: Error) => {
+        alert('Failed to delete recipe: ' + error.message);
+      });
+    }
+  };
+
   if (!recipe) {
     return <div>Recipe not found</div>;
   }
 
   return (
-    <RecipeForm
-      formData={formData}
-      setFormData={setFormData}
-      onSubmit={handleSubmit}
-      submitButtonText="Update Recipe"
-    />
+    <div className="max-w-2xl mx-auto p-4">
+      <h2 className="text-2xl font-bold mb-6">Edit Recipe</h2>
+      <RecipeForm
+        formData={formData}
+        setFormData={setFormData}
+        onSubmit={handleSubmit}
+        submitButtonText="Update Recipe"
+      />
+      <div className="mt-6 border-t pt-6">
+        <button
+          onClick={handleDelete}
+          className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          Delete Recipe
+        </button>
+      </div>
+    </div>
   );
 };
 
