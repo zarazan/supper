@@ -1,6 +1,12 @@
 import React from 'react';
-import { RecipeFormData } from './RecipeNew';
 import { useAppSelector } from '../../store/hooks';
+import { Ingredient } from '../../types/types';
+
+export interface RecipeFormData {
+  name: string;
+  description: string;
+  ingredients_attributes: Ingredient[];
+}
 
 interface RecipeFormProps {
   formData: RecipeFormData;
@@ -25,13 +31,26 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ formData, setFormData, onSubmit
   const deleteIngredient = (indexToDelete: number) => {
     setFormData({
       ...formData,
-      ingredients_attributes: formData.ingredients_attributes.filter((_, index) => index !== indexToDelete)
+      ingredients_attributes: formData.ingredients_attributes
+        .map((ingredient, index) => {
+          if (index === indexToDelete) {
+            if (ingredient.id) {
+              return { ...ingredient, _destroy: true };
+            }
+            return null;
+          }
+          return ingredient;
+        })
+        .filter((ingredient): ingredient is Ingredient => 
+          ingredient !== null
+        )
     });
   };
 
   const handleIngredientChange = (index: number, field: 'food_id' | 'measurement', value: string | number) => {
     const newIngredients = [...formData.ingredients_attributes];
     newIngredients[index] = {
+      id: newIngredients[index]?.id || undefined,
       food_id: newIngredients[index]?.food_id || 0,
       measurement: newIngredients[index]?.measurement || '',
       [field]: value
@@ -66,7 +85,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ formData, setFormData, onSubmit
       <div className="mb-4">
         <h3 className="mb-2">Ingredients</h3>
         {formData.ingredients_attributes.map((ingredient, index) => (
-          <div key={index} className="flex gap-4 mb-2">
+          <div key={index} className={`flex gap-4 mb-2 ${ingredient._destroy && 'hidden'}`}>
             <select
               value={ingredient.food_id || ''}
               onChange={(e) => handleIngredientChange(index, 'food_id', parseInt(e.target.value))}
@@ -77,7 +96,6 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ formData, setFormData, onSubmit
                 <option 
                   key={food.id} 
                   value={food.id}
-                  selected={food.id === ingredient.food_id}
                 >
                   {food.name}
                 </option>

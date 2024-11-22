@@ -5,13 +5,7 @@ import { fetchFoods } from '../../store/foodsSlice';
 import useCsrfToken from '../../hooks/useCsrfToken';
 import { useNavigate } from 'react-router-dom';
 import RecipeForm from './RecipeForm';
-import { Ingredient } from '../../types/types';
-
-export interface RecipeFormData {
-  name: string;
-  description: string;
-  ingredients_attributes: Ingredient[];
-}
+import { RecipeFormData } from './RecipeForm';
 
 const NewRecipeForm: React.FC = () => {
   const dispatch = useAppDispatch();

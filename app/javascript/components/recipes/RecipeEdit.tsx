@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { updateRecipe } from '../../store/recipesSlice';
-import { RecipeFormData } from './RecipeNew';
+import { RecipeFormData } from './RecipeForm';
 import useCsrfToken from '../../hooks/useCsrfToken';
 import { useNavigate, useParams } from 'react-router-dom';
 import RecipeForm from './RecipeForm';
