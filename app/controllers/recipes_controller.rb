@@ -34,7 +34,14 @@ class RecipesController < ApplicationController
   private
 
   def recipe_params
-    params.require(:recipe).permit(:name, :description, ingredients_attributes: [:id, :food_id, :measurement, :_destroy])
+    rp = params.require(:recipe).permit(:name, :description, ingredients_attributes: [:id, :food_id, :food_name, :measurement, :_destroy])
+    rp[:ingredients_attributes].each do |ingredient|
+      food_name = ingredient.delete(:food_name)
+      if ingredient[:food_id].blank? || ingredient[:food_id] == 0
+        ingredient[:food_id] = Food.find_or_create_by!(name: food_name).id
+      end
+    end
+    rp
   end
 
 end

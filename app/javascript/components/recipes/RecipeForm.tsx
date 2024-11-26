@@ -15,6 +15,24 @@ interface RecipeFormProps {
   submitButtonText: string;
 }
 
+type IngredientField = 'food_id' | 'food_name' | 'measurement';
+
+const WarningIcon = () => (
+  <svg 
+    className="w-5 h-5 text-amber-500" 
+    fill="none" 
+    stroke="currentColor" 
+    viewBox="0 0 24 24"
+  >
+    <path 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      strokeWidth={2} 
+      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
+    />
+  </svg>
+);
+
 const RecipeForm: React.FC<RecipeFormProps> = ({ formData, setFormData, onSubmit, submitButtonText }) => {
   const { items: foods } = useAppSelector((state) => state.foods);
 
@@ -47,11 +65,12 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ formData, setFormData, onSubmit
     });
   };
 
-  const handleIngredientChange = (index: number, field: 'food_id' | 'measurement', value: string | number) => {
+  const handleIngredientChange = (index: number, field: IngredientField, value: string | number) => {
     const newIngredients = [...formData.ingredients_attributes];
     newIngredients[index] = {
       id: newIngredients[index]?.id || undefined,
       food_id: newIngredients[index]?.food_id || 0,
+      food_name: newIngredients[index]?.food_name || '',
       measurement: newIngredients[index]?.measurement || '',
       [field]: value
     };
@@ -59,6 +78,18 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ formData, setFormData, onSubmit
       ...formData,
       ingredients_attributes: newIngredients
     });
+  };
+
+  const getFoodSuggestions = (searchTerm: string) => {
+    const normalizedTerm = searchTerm?.toLowerCase().trim() || '';
+    const hasExactMatch = foods.some(f => f.name.toLowerCase() === normalizedTerm);
+    if (hasExactMatch) return [];
+    
+    return foods
+      .filter(food => food.name.toLowerCase().includes(normalizedTerm))
+      .map((food) => (
+        <option key={food.id} value={food.name} />
+      ));
   };
 
   return (
@@ -86,21 +117,45 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ formData, setFormData, onSubmit
         <h3 className="mb-2">Ingredients</h3>
         {formData.ingredients_attributes.map((ingredient, index) => (
           <div key={index} className={`flex gap-4 mb-2 ${ingredient._destroy && 'hidden'}`}>
-            <select
-              value={ingredient.food_id || ''}
-              onChange={(e) => handleIngredientChange(index, 'food_id', parseInt(e.target.value))}
-              className="p-2 border rounded"
-            >
-              <option value="">Select Food</option>
-              {foods.map((food) => (
-                <option 
-                  key={food.id} 
-                  value={food.id}
-                >
-                  {food.name}
-                </option>
-              ))}
-            </select>
+            
+            <div className="relative">
+              <input
+                type="text"
+                value={ingredient.food_name}
+                onChange={(e) => {
+                  const searchTerm = e.target.value.toLowerCase();
+                  const matchedFood = foods.find(f => f.name.toLowerCase() === searchTerm);
+
+                  const updatedIngredient = {
+                    ...ingredient,
+                    food_name: e.target.value,
+                    food_id: matchedFood ? matchedFood.id : 0
+                  };
+
+                  const newIngredients = [...formData.ingredients_attributes];
+                  newIngredients[index] = updatedIngredient;
+
+                  setFormData({
+                    ...formData,
+                    ingredients_attributes: newIngredients
+                  });
+                }}
+                list={`foods-list-${index}`}
+                className={`p-2 border rounded ${!ingredient.food_id ? 'border-red-500 bg-red-50' : ''}`}
+                placeholder="Type food name..."
+              />
+              {!ingredient.food_id && ingredient.food_name && (
+                <div className="relative float-right -ml-10 pr-2 pt-3 group">
+                  <WarningIcon />
+                  <div className="absolute left-6 top-0 w-48 p-2 bg-amber-100 text-amber-700 text-sm rounded shadow-lg invisible group-hover:visible">
+                    This will create a new food type. Please try to select a food from the suggestions.
+                  </div>
+                </div>
+              )}
+              <datalist id={`foods-list-${index}`}>
+                {getFoodSuggestions(ingredient.food_name || '')}
+              </datalist>
+            </div>
 
             <input
               type="text"
