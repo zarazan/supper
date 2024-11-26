@@ -38,7 +38,8 @@ class RecipesController < ApplicationController
     rp[:ingredients_attributes].each do |ingredient|
       food_name = ingredient.delete(:food_name)
       if ingredient[:food_id].blank? || ingredient[:food_id] == 0
-        ingredient[:food_id] = Food.find_or_create_by!(name: food_name).id
+        new_food = Food.new(name: food_name)
+        ingredient[:food_id] = new_food.id if new_food.save
       end
     end
     rp

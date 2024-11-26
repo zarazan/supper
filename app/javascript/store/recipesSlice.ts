@@ -24,7 +24,7 @@ export const createRecipe = createAsyncThunk(
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || 'An error occurred');
+      throw new Error(errorData.errors || 'Unknown error');
     }
     
     return response.json();
