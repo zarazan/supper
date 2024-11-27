@@ -20,6 +20,7 @@ const NewRecipeForm: React.FC = () => {
   const [formData, setFormData] = useState<RecipeFormData>({
     name: '',
     description: '',
+    instructions: '',
     ingredients_attributes: []
   });
   
@@ -27,6 +28,7 @@ const NewRecipeForm: React.FC = () => {
     setFormData({
       name: '',
       description: '',
+      instructions: '',
       ingredients_attributes: []
     });
   };

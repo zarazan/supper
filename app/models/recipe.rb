@@ -1,5 +1,6 @@
 class Recipe < ApplicationRecord
   has_many :ingredients, dependent: :destroy
+  has_and_belongs_to_many :meal_plans
 
   accepts_nested_attributes_for :ingredients, allow_destroy: true
 

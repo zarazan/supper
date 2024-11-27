@@ -4,6 +4,12 @@ Rails.application.routes.draw do
   scope "/api" do
     resources :recipes
     resources :foods, only: [:index]
+    resources :meal_plans, only: [:create, :show] do
+      member do
+        post :add_recipe
+        delete :remove_recipe
+      end
+    end
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

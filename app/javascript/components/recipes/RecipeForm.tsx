@@ -5,6 +5,7 @@ import { Ingredient } from '../../types/types';
 export interface RecipeFormData {
   name: string;
   description: string;
+  instructions: string;
   ingredients_attributes: Ingredient[];
 }
 
@@ -109,6 +110,15 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ formData, setFormData, onSubmit
         <textarea
           value={formData.description || ''}
           onChange={(e) => setFormData({...formData, description: e.target.value})}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block mb-2">Instructions:</label>
+        <textarea
+          value={formData.instructions || ''}
+          onChange={(e) => setFormData({...formData, instructions: e.target.value})}
           className="w-full p-2 border rounded"
         />
       </div>
